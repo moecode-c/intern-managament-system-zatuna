@@ -16,12 +16,33 @@ git clone <repo-url>
 cd intern-managament-system-zatuna
 npm install
 cp .env.example .env      # then edit .env - set MONGO_URI and JWT_SECRET
-npm run seed              # creates the first admin + sample applications
+npm run seed              # fills the database with a full local dataset
 npm run dev               # API on :5000, client on :5173
 ```
 
-Open http://localhost:5173. Log in with the `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`
-values from your `.env`.
+Open http://localhost:5173.
+
+### Seeded accounts
+
+`npm run seed` creates one account per role so you can develop against all three
+without hand-editing the database. They all share the `SEED_ADMIN_PASSWORD` from
+your `.env` (default `Admin123!`).
+
+| Role | Email |
+|---|---|
+| admin | the `SEED_ADMIN_EMAIL` from your `.env` |
+| mentor | `sara.mentor@elzatuna.local` |
+| mentor | `karim.mentor@elzatuna.local` |
+| intern | `nour@elzatuna.local`, `yousef@`, `salma@`, `hana@` |
+
+The seed also inserts 6 applications spanning every stage, 4 interns across two
+cohorts with partly-completed checklists, 7 tasks covering every status
+(including one overdue), and 35 activity logs over the last fortnight — with one
+intern deliberately missing this week's check-ins so the "needs attention" views
+have something to show.
+
+Re-running `npm run seed` on a populated database does nothing. Use
+`npm run seed:fresh` to wipe and rebuild.
 
 ### Scripts
 
@@ -30,7 +51,8 @@ values from your `.env`.
 | `npm run dev` | Runs API and client together |
 | `npm run dev:server` | API only, with nodemon reload |
 | `npm run dev:client` | Vite dev server only |
-| `npm run seed` | Seeds the admin user and sample data |
+| `npm run seed` | Seeds the full local dataset (no-op if already seeded) |
+| `npm run seed:fresh` | Wipes every collection, then reseeds |
 | `npm run build` | Production build of the client |
 
 ---
