@@ -1,4 +1,6 @@
-import Application from '../models/Application.js';
+import mongoose from 'mongoose';
+import Application, { APPLICATION_STAGES } from '../models/Application.js';
+import ApiError from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { notImplemented } from '../utils/notImplemented.js';
 
@@ -39,12 +41,52 @@ export const listApplications = asyncHandler(async (req, res) => {
 });
 
 // GET /api/applications/:id  (admin, mentor)
-// TODO: return one application with reviews populated.
-export const getApplication = notImplemented('ATS-DETAIL');
+export const getApplication = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, 'Invalid application id format.');
+  }
+
+  const application = await Application.findById(id).populate(
+    'reviews.reviewer',
+    'name email'
+  );
+
+  if (!application) {
+    throw new ApiError(404, 'Application not found.');
+  }
+
+  res.json({ success: true, data: application });
+});
 
 // PATCH /api/applications/:id/stage  (admin, mentor)
-// TODO: validate the target stage against APPLICATION_STAGES, move it, record who moved it.
-export const updateStage = notImplemented('ATS-STAGE');
+export const updateStage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { stage } = req.body;
+
+  if (!mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, 'Invalid application id format.');
+  }
+
+  if (!APPLICATION_STAGES.includes(stage)) {
+    throw new ApiError(
+      400,
+      `Invalid stage. Allowed values: ${APPLICATION_STAGES.join(', ')}.`
+    );
+  }
+
+  const application = await Application.findById(id);
+
+  if (!application) {
+    throw new ApiError(404, 'Application not found.');
+  }
+
+  application.stage = stage;
+  await application.save();
+
+  res.json({ success: true, data: application });
+});
 
 // POST /api/applications/:id/reviews  (admin, mentor)
 // TODO: push a review subdoc; one review per reviewer - update instead of duplicating.
