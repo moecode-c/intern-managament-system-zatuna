@@ -35,7 +35,7 @@ export default function Layout() {
               <button type="button" onClick={handleLogout}>Log out</button>
             </>
           ) : (
-            <Link to="/login">Log in</Link>
+            <Link to="/login" className="btn" style={{ padding: '0.4rem 1.2rem', fontSize: '0.85rem' }}>Log in</Link>
           )}
         </div>
       </header>

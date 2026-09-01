@@ -3,6 +3,7 @@ import Layout from './components/Layout.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Activities from './pages/Activities.jsx';
 import Applications from './pages/Applications.jsx';
+import ApplicationStatus from './pages/ApplicationStatus.jsx';
 import Apply from './pages/Apply.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Home from './pages/Home.jsx';
@@ -19,6 +20,7 @@ export default function App() {
         {/* Public */}
         <Route index element={<Home />} />
         <Route path="apply" element={<Apply />} />
+        <Route path="status/:token" element={<ApplicationStatus />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
 
